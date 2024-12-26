@@ -1,0 +1,53 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+# Configuración del grafo
+G = nx.DiGraph()  # Usamos un grafo dirigido porque estamos trabajando con precedencias
+
+# Opciones de dibujo
+options = {
+    'node_color': 'turquoise',
+    'node_size': 1000,
+    'width': 2,
+}
+
+# Solicitar número de actividades
+num_actividades = int(input("Número de actividades: "))
+
+# Agregar nodos al grafo
+G.add_nodes_from(range(1, num_actividades + 1))
+
+# Lista de actividades
+actividades = list(range(1, num_actividades + 1))
+print(f"Actividades: {actividades}")
+
+# Función para agregar precedencias
+def agregar_precedencia(origen, destino):
+    if origen in G.nodes and destino in G.nodes:
+        G.add_edge(origen, destino)
+    else:
+        print(f"Error: los nodos {origen} o {destino} no existen.")
+
+# Solicitar precedencias
+for actividad in actividades:
+    while True:
+        try:
+            precedencia = int(input(f"¿Cuál es la precedencia de la Actividad {actividad}? (0 si no tiene): "))
+            if precedencia == 0:
+                break  # Sin precedencia
+            if precedencia > num_actividades or precedencia < 0:
+                print("Número inválido. Inténtalo de nuevo.")
+                continue
+            agregar_precedencia(precedencia, actividad)
+            
+            otra = input("¿Tiene otra precedencia? (s/n): ").strip().lower()
+            if otra != 's':
+                break
+        except ValueError:
+            print("Entrada inválida. Por favor, ingresa un número.")
+
+# Dibujo del grafo
+plt.figure(figsize=(10, 6))
+pos = nx.spring_layout(G)  # Disposición del grafo
+nx.draw(G, pos, with_labels=True, **options)
+plt.show()
